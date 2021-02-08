@@ -6,3 +6,5 @@ Here is the steps
 2. Investment Opportunity Set
 3. Minimum Variance Portfolio and Efficient Frontier
 4. Optimal Risky Portfolio and Capital Market Line
+
+To Students in AF5353: any comments or suggestions are welcome and appreciated.
