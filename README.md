@@ -7,4 +7,5 @@ Here is the steps
 3. Minimum Variance Portfolio and Efficient Frontier
 4. Optimal Risky Portfolio and Capital Market Line
 
-To Students in AF5353: any comments or suggestions are welcome and appreciated.
+To MAFA Students in AF5353: 
+Any comments or suggestions are welcome and appreciated.
