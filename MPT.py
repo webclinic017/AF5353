@@ -31,6 +31,8 @@ data = pd.DataFrame(symbol_dict)
 rets = np.log(data / data.shift(1))
 rets.hist(bins=40, figsize=(10, 6));
 
+rets.mean()*252
+rets.std()*math.sqrt(252)
 
 #########################################################
 ### Step 2                                             ##   
