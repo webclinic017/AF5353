@@ -19,3 +19,5 @@ symbol_dict = {}
 for symbol in symbols:
     symbol_df = pdr.get_data_yahoo(symbol, start=start_date, end=end_date)
     symbol_dict[symbol] = symbol_df["Adj Close"]
+df = pd.DataFrame(symbol_dict)
+    
