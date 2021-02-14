@@ -61,6 +61,7 @@ pvols = np.array(pvols)
 plt.figure(figsize=(10, 6))
 plt.scatter(pvols, prets, c=(prets-risk_free_rate) / pvols, marker='o', cmap='coolwarm')
 plt.plot(rets.std()*math.sqrt(252), rets.mean()*252, 'y.', markersize=15.0)
+plt.grid()
 plt.xlabel('expected volatility')
 plt.ylabel('expected return')
 plt.colorbar(label='Sharpe ratio');
