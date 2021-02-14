@@ -7,6 +7,8 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 from pandas_datareader import data as pdr
+import yfinance as yf
+yf.pdr_override()
 
 
 #########################################################
@@ -25,8 +27,14 @@ for symbol in symbols:
     symbol_df = pdr.get_data_yahoo(symbol, start=start_date, end=end_date)
     symbol_dict[symbol] = symbol_df["Adj Close"]
 df = pd.DataFrame(symbol_dict)
+
+# Historical chart 
+(df / df.iloc[0]*100).plot(figsize=(10, 6))
+
+# choose log_return or simple_return 
+daily_ret = np.log(df / df.shift(1)) 
+#daily_ret = df.pct_change() 
     
-daily_ret = df.pct_change() 
 annual_ret = daily_ret.mean() * 252
 daily_cov = daily_ret.cov() 
 annual_cov = daily_cov * 252
@@ -47,23 +55,25 @@ for _ in range(20000):
     weights = np.random.random(len(symbols)) 
     weights /= np.sum(weights) 
 
-    returns = np.dot(weights, annual_ret) 
-    risk = np.sqrt(np.dot(weights, np.dot(annual_cov, weights))) 
-
+    returns = weights.T @ annual_ret 
+    risk = (weights.T @ annual_cov @ weights)**0.5 
+    
     port_ret.append(returns) 
     port_risk.append(risk) 
     port_weights.append(weights) 
     
 portfolio = {'Returns': port_ret, 'Risk': port_risk}
 for i, s in enumerate(symbols): 
-    portfolio[s] = [weight[i] for weight in port_weights]
+    portfolio[s] = [weight[i] for weight in port_weights] 
 df = pd.DataFrame(portfolio) 
-
 df['SR'] = (df.Returns-risk_free_rate)/df.Risk 
 
-df.plot.scatter(x='Risk', y='Returns', figsize=(8, 6), grid=True, c='SR', cmap='coolwarm')
+plt.figure(figsize=(10, 6))
+plt.scatter(port_risk, port_ret, c=df['SR'], marker='o', cmap='coolwarm')
 plt.plot(annual_std, annual_ret, 'y.', markersize=15.0)
-plt.title('Efficient Frontier') 
-plt.xlabel('Risk') 
-plt.ylabel('Expected Returns') 
-plt.show() 
+plt.grid()
+plt.xlabel('expected volatility')
+plt.ylabel('expected return')
+plt.colorbar(label='Sharpe ratio');
+
+
