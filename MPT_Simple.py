@@ -44,7 +44,7 @@ annual_std = daily_std*(252**0.5)
 
 #########################################################
 ### Step 2                                             ##   
-### Investment Opportunity Sets                        ##
+### Investment Opportunity Sets, MVP, ORP              ##
 #########################################################
 
 port_ret = [] 
@@ -66,14 +66,24 @@ portfolio = {'Returns': port_ret, 'Risk': port_risk}
 for i, s in enumerate(symbols): 
     portfolio[s] = [weight[i] for weight in port_weights] 
 df = pd.DataFrame(portfolio) 
-df['SR'] = (df.Returns-risk_free_rate)/df.Risk 
+df['Sharpe'] = (df.Returns-risk_free_rate)/df.Risk 
+
+max_sharpe = df.loc[df['Sharpe']==df['Sharpe'].max()]
+min_risk = df.loc[df['Risk']==df['Risk'].min()]
+
 
 plt.figure(figsize=(10, 6))
-plt.scatter(port_risk, port_ret, c=df['SR'], marker='o', cmap='coolwarm')
+plt.scatter(port_risk, port_ret, c=sharpe_ratio, marker='.', cmap='coolwarm')
+plt.scatter(max_sharpe['Risk'], max_sharpe['Returns'], c='r', marker='*', s=300) 
+plt.scatter(min_risk['Risk'], min_risk['Returns'], c='r', marker='X', s=200)
 plt.plot(annual_std, annual_ret, 'y.', markersize=15.0)
 plt.grid()
-plt.xlabel('expected volatility')
-plt.ylabel('expected return')
+plt.title('Portfolio Optimization') 
+plt.xlabel('Expected Volatility')
+plt.ylabel('Expected Return')
 plt.colorbar(label='Sharpe ratio');
 
+# type to find portfolio weights
+max_sharpe
+min_risk
 
