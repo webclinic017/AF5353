@@ -61,11 +61,16 @@ five_factor_data.loc[:, five_factor_data.columns != 'rtn'] /= 100
 five_factor_data['excess_rtn'] = five_factor_data.rtn - five_factor_data.rf
 
 
-### Step 8-1. Estimate the four-factor model:
+### Step 8-1. Estimate the one-factor model (CAPM):
+one_factor_model = smf.ols(formula='excess_rtn ~ mkt', data=four_factor_data).fit()
+print(one_factor_model.summary())
+
+
+### Step 8-2. Estimate the four-factor model:
 four_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml + mom', data=four_factor_data).fit()
 print(four_factor_model.summary())
 
 
-### Step 8-2. Estimate the five-factor model:
+### Step 8-3. Estimate the five-factor model:
 five_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml + rmw + cma', data=five_factor_data).fit()
 print(five_factor_model.summary())
