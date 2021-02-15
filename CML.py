@@ -31,8 +31,9 @@ data = pd.DataFrame(symbol_dict)
 rets = np.log(data / data.shift(1))
 rets.hist(bins=40, figsize=(10, 6));
 
-rets.mean()*252
-rets.std()*math.sqrt(252)
+annual_ret = rets.mean()*252
+annual_std = rets.std()*math.sqrt(252)
+annual_cov = rets.cov()*252
 
 #########################################################
 ### Step 2                                             ##   
@@ -41,10 +42,10 @@ rets.std()*math.sqrt(252)
 
 
 def port_ret(weights):
-    return weights.T @ rets.mean()*252
+    return weights.T @ annual_ret
 
 def port_vol(weights):
-    return (weights.T @ rets.cov() @ weights * 252)**0.5
+    return (weights.T @ annual_cov @ weights )**0.5
 
 noa = len(symbols) # noa = number of assets
 
