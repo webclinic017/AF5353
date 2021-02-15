@@ -61,13 +61,13 @@ pvols = np.array(pvols)
 
 plt.figure(figsize=(10, 6))
 plt.scatter(pvols, prets, c=(prets-risk_free_rate) / pvols, marker='o', cmap='coolwarm')
-plt.plot(rets.std()*math.sqrt(252), rets.mean()*252, 'y.', markersize=15.0)
+plt.plot(annual_std, annual_ret, 'y.', markersize=15.0)
 plt.grid()
 plt.xlabel('expected volatility')
 plt.ylabel('expected return')
 plt.colorbar(label='Sharpe ratio');
 
-print(f'Volatiltiy: \n{(rets.std()*math.sqrt(252)).round(4)} \n\nReturn: \n{(rets.mean()*252).round(4)} \n\nCorrelation: \n{rets.corr().round(4)}')
+print(f'Volatiltiy: \n{(annual_std).round(4)} \n\nReturn: \n{(annual_ret).round(4)} \n\nCorrelation: \n{rets.corr().round(4)}')
 
 
 
@@ -92,7 +92,7 @@ cons = ({'type': 'eq', 'fun': lambda x: port_ret(x) - tret},
 bnds = tuple((0, 1) for x in range(noa))
 
 min_return = port_ret(optv['x'])
-max_return = np.max(rets.mean()*252)
+max_return = np.max(annual_ret)
 
 trets = np.linspace(min_return, max_return, 50)
 tvols = []
@@ -105,7 +105,7 @@ plt.figure(figsize=(10, 6))
 plt.scatter(pvols, prets, c=(prets-risk_free_rate) / pvols, marker='.', alpha=0.8, cmap='coolwarm')
 plt.plot(tvols, trets, 'b', lw=4.0)
 plt.plot(port_vol(optv['x']), port_ret(optv['x']), 'r*', markersize=15.0)
-plt.plot(rets.std()*math.sqrt(252), rets.mean()*252, 'y.', markersize=15.0)
+plt.plot(annual_std, annual_ret, 'y.', markersize=15.0)
 plt.grid(True)
 plt.xlabel('expected volatility')
 plt.ylabel('expected return')
@@ -171,7 +171,7 @@ plt.plot(opt[2], f(opt[2]), 'y*', markersize=15.0)
 plt.grid(True)
 plt.axhline(0, color='k', ls='--', lw=2.0)
 plt.axvline(0, color='k', ls='--', lw=2.0)
-plt.plot(rets.std()*math.sqrt(252), rets.mean()*252, 'c.', markersize=15.0)
+plt.plot(annual_std, annual_ret, 'c.', markersize=15.0)
 plt.xlabel('expected volatility')
 plt.ylabel('expected return')
 plt.colorbar(label='Sharpe ratio')
