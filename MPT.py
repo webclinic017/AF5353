@@ -26,7 +26,7 @@ for symbol in symbols:
     symbol_dict[symbol] = symbol_df["Adj Close"]
 data = pd.DataFrame(symbol_dict)
 
-# Historical chart and return distribution
+# Historical chart and log return distribution
 (data / data.iloc[0]*100).plot(figsize=(10, 6))
 rets = np.log(data / data.shift(1))
 rets.hist(bins=40, figsize=(10, 6));
