@@ -74,3 +74,17 @@ print(four_factor_model.summary())
 ### Step 8-3. Estimate the five-factor model:
 five_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml + rmw + cma', data=five_factor_data).fit()
 print(five_factor_model.summary())
+
+
+'''
+RMW (Robust Minus Weak) 
+Average return on the robust operating profitability portfolios minus the average return on the weak operating profitability portfolios
+OP for June of year t is (OP minus interest expense) / book equity for the last fiscal year end in t-1. 
+The OP breakpoints are the 30th and 70th NYSE percentiles.
+
+CMA (Conservative Minus Aggressive) 
+Average return on the conservative investment portfolios minus the average return on the aggressive investment portfolios
+Investment is the change in total assets from the fiscal year ending in year t-2 to the fiscal year ending in t-1, divided by t-2 total assets. 
+The Inv breakpoints are the 30th and 70th NYSE percentiles.
+'''
+
