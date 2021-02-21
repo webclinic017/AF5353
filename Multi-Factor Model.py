@@ -6,34 +6,30 @@ import pandas_datareader.data as web
 
 
 ### Step 2. Specify the risky asset and the time horizon:
-RISKY_ASSET = 'AMZN'
-START_DATE = '2013-12-31'
-END_DATE = '2018-12-31'
+RISKY_ASSET = 'GOOG'
+START_DATE = '2010-01-01'
+END_DATE = '2020-12-31'
 
 
-### Step 3. Download the risk factors from prof. French's website:
+### Step 3. Download the data of the risky asset from Yahoo Finance and Calculate the monthly returns:
+asset_df = yf.download(RISKY_ASSET, start=START_DATE, end=END_DATE, adjusted=True, progress=False)
+
+y = asset_df['Adj Close'].resample('M').last().pct_change().dropna()
+y.index = y.index.strftime('%Y-%m')
+y.name = 'return'
+
+
+### Step 4. Download the risk factors from prof. French's website:
 # three factors
 df_three_factor = web.DataReader('F-F_Research_Data_Factors', 'famafrench', start=START_DATE, end=END_DATE)[0]
 df_three_factor.index = df_three_factor.index.format()
 # momentum factor
 df_mom = web.DataReader('F-F_Momentum_Factor', 'famafrench', start=START_DATE, end=END_DATE)[0]
 df_mom.index = df_mom.index.format()
-# five factors
-df_five_factor = web.DataReader('F-F_Research_Data_5_Factors_2x3', 'famafrench', start=START_DATE, end=END_DATE)[0]
-df_five_factor.index = df_five_factor.index.format()
 
 
-### Step 4. Download the data of the risky asset from Yahoo Finance:
-asset_df = yf.download(RISKY_ASSET, start=START_DATE, end=END_DATE, adjusted=True, progress=False)
 
-
-### Step 5. Calculate the monthly returns:
-y = asset_df['Adj Close'].resample('M').last().pct_change().dropna()
-y.index = y.index.strftime('%Y-%m')
-y.name = 'return'
-
-
-### Step 6. Merge the datasets for the four-factor model:
+### Step 5. Merge the datasets for the four-factor model:
 # join all datasets on the index
 four_factor_data = df_three_factor.join(df_mom).join(y)
 
@@ -43,11 +39,35 @@ four_factor_data.columns = ['mkt', 'smb', 'hml', 'rf', 'mom', 'rtn']
 # divide everything (except returns) by 100
 four_factor_data.loc[:, four_factor_data.columns != 'rtn'] /= 100
 
-# calculate excess returns
+# calculate excess returns of risky asset
 four_factor_data['excess_rtn'] = four_factor_data.rtn - four_factor_data.rf
 
 
-### Step 7. Merge the datasets for the five-factor model:
+### Step 6. Run the regression to estimate alpha and beta
+# one-factor model (CAPM):
+one_factor_model = smf.ols(formula='excess_rtn ~ mkt', data=four_factor_data).fit()
+print(one_factor_model.summary())
+
+# three-factor model:
+three_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml', data=four_factor_data).fit()
+print(three_factor_model.summary())
+
+# four-factor model:
+four_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml + mom', data=four_factor_data).fit()
+print(four_factor_model.summary())
+
+
+
+#############################
+### For five-factor model ###
+#############################
+
+### Step 1. Download the risk factors from prof. French's website:
+# five factors
+df_five_factor = web.DataReader('F-F_Research_Data_5_Factors_2x3', 'famafrench', start=START_DATE, end=END_DATE)[0]
+df_five_factor.index = df_five_factor.index.format()
+
+### Step 2. Merge the datasets for the five-factor model:
 # join all datasets on the index
 five_factor_data = df_five_factor.join(y)
 
@@ -60,21 +80,9 @@ five_factor_data.loc[:, five_factor_data.columns != 'rtn'] /= 100
 # calculate excess returns
 five_factor_data['excess_rtn'] = five_factor_data.rtn - five_factor_data.rf
 
-
-### Step 8-1. Estimate the one-factor model (CAPM):
-one_factor_model = smf.ols(formula='excess_rtn ~ mkt', data=four_factor_data).fit()
-print(one_factor_model.summary())
-
-
-### Step 8-2. Estimate the four-factor model:
-four_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml + mom', data=four_factor_data).fit()
-print(four_factor_model.summary())
-
-
-### Step 8-3. Estimate the five-factor model:
+### Step 3. Estimate the five-factor model:
 five_factor_model = smf.ols(formula='excess_rtn ~ mkt + smb + hml + rmw + cma', data=five_factor_data).fit()
 print(five_factor_model.summary())
-
 
 '''
 RMW (Robust Minus Weak) 
