@@ -18,3 +18,13 @@ result.drop(['RF'], axis=1).corr().round(4)
 
 ## You can check the available data from french library and add to your correlation calculation 
 pandas_datareader.famafrench.get_available_datasets()
+
+## If I add reveral factors
+df_five_factor = web.DataReader('F-F_Research_Data_5_Factors_2x3', 'famafrench', start=START_DATE, end=END_DATE)[0]
+df_mom = web.DataReader('F-F_Momentum_Factor', 'famafrench', start=START_DATE, end=END_DATE)[0]
+df_str = web.DataReader('F-F_ST_Reversal_Factor', 'famafrench', start=START_DATE, end=END_DATE)[0]
+df_ltr = web.DataReader('F-F_LT_Reversal_Factor', 'famafrench', start=START_DATE, end=END_DATE)[0]
+result1 = pd.merge(df_five_factor, df_mom, left_index=True, right_index=True)
+result2 = pd.merge(df_str, df_ltr, left_index=True, right_index=True)
+result = pd.merge(result1, result2, left_index=True, right_index=True)
+result.drop(['RF'], axis=1).corr().round(4)
