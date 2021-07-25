@@ -8,6 +8,8 @@ import math
 import matplotlib.pyplot as plt
 from pandas_datareader import data as pdr
 
+import yfinance as yf # <== to fix pdr problem (https://github.com/ranaroussi/yfinance)
+yf.pdr_override() # <== that's all it takes :-)
 
 #########################################################
 ### Step 1                                             ##   
