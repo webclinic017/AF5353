@@ -1,6 +1,7 @@
-# install pandas-datareader package if you haven't before
-# conda install -c anaconda pandas-datareader (if you use conda)
-# pip install pandas-datareader (if you don't use conda)
+# install packages if you haven't before
+# pip install pandas-datareader (if you use conda => conda install -c anaconda pandas-datareader)
+# pip install yfinance
+# pip install scipy (if you use conda => conda install -c anaconda scipy)
 
 import pandas as pd
 import numpy as np
@@ -30,6 +31,7 @@ data = pd.DataFrame(symbol_dict)
 
 # Historical chart and log return distribution
 (data / data.iloc[0]*100).plot(figsize=(10, 6))
+
 rets = np.log(data / data.shift(1))
 rets.hist(bins=40, figsize=(10, 6));
 
